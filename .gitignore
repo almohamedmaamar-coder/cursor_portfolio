@@ -3,6 +3,7 @@ node_modules/
 
 # Next.js build
 .next/
+*.tsbuildinfo
 
 # Environment
 .env*.local

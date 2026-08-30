@@ -34,7 +34,7 @@ const ensembleRetriever = new EnsembleRetriever({ retrievers: [denseRetriever, s
 const cohereRerank = new CohereRerank({ apiKey: process.env.COHERE_API_KEY, model: "rerank-english-v3.0", topN: 4 });
 const compressionRetriever = new ContextualCompressionRetriever({ baseCompressor: cohereRerank, baseRetriever: ensembleRetriever });
 
-const model = new ChatMistralAI({ modelName: "mistral-large-latest", apiKey: process.env.MISTRAL_API_KEY, temperature: 0.1 });
+const model = new ChatMistralAI({ modelName: process.env.MISTRAL_MODEL || "mistral-small-latest", apiKey: process.env.MISTRAL_API_KEY, temperature: 0.1 });
 const prompt = PromptTemplate.fromTemplate(`
 You are Med Maamar's highly professional AI portfolio assistant.
 Your job is to answer questions about Med's skills, experience, and projects.

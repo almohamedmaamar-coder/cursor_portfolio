@@ -12,7 +12,7 @@ Given a user's question about Mohamed Maamar's portfolio, generate 3 semanticall
 
 export async function generateQueryVariations(query: string): Promise<string[]> {
   const model = new ChatMistralAI({
-    modelName: "mistral-large-latest",
+    modelName: process.env.MISTRAL_MODEL || "mistral-small-latest",
     apiKey: process.env.MISTRAL_API_KEY,
     temperature: 0.3,
   });

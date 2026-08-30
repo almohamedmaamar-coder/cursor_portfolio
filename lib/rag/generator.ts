@@ -71,7 +71,7 @@ export async function generate(
   );
 
   const model = new ChatMistralAI({
-    modelName: "mistral-large-latest",
+    modelName: process.env.MISTRAL_MODEL || "mistral-small-latest",
     apiKey: process.env.MISTRAL_API_KEY,
     temperature: 0.1,
   });
