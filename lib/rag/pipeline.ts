@@ -38,8 +38,8 @@ export async function runRagPipeline(query: string, history?: ChatMessage[]): Pr
     return { content: "I don't have that detail — reach Med directly at almohamedmaamar@gmail.com.", citations: [] };
   }
 
-  // Rerank all fused documents (removed dominant type filtering that was dropping valid context)
-  const rerankedDocs = await rerank(docs, query, Math.min(docs.length, 25));
+  // Rerank all fused documents (top 10 chunks to prevent context bloat and rate limits)
+  const rerankedDocs = await rerank(docs, query, Math.min(docs.length, 10));
   
   console.log("🎯 [RAG] Reranked docs count:", rerankedDocs.length);
   console.log("🎯 [RAG] Reranked titles:", rerankedDocs.map((d) => d.metadata?.title));

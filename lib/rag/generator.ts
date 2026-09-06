@@ -25,7 +25,7 @@ const GREETING_RESPONSE =
 export async function rerank(
   docs: Document[],
   query: string,
-  topN = 25
+  topN = 10
 ): Promise<Document[]> {
   if (docs.length === 0) return [];
   const reranker = new CohereRerank({
