@@ -1,7 +1,6 @@
-import { ChatGoogleGenerativeAI } from "@langchain/google-genai";
 import { CohereRerank } from "@langchain/cohere";
-import { HumanMessage, SystemMessage } from "@langchain/core/messages";
 import { Document } from "@langchain/core/documents";
+import { callGemini } from "./gemini";
 import type { RagResult } from "./types";
 
 const GREETINGS_RE =
@@ -70,19 +69,11 @@ export async function generate(
     )
   );
 
-  const model = new ChatGoogleGenerativeAI({
-    model: process.env.GOOGLE_MODEL || "gemini-2.5-flash",
-    apiKey: process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY,
-    temperature: 0.1,
-  });
-
-  const response = await model.invoke([
-    new SystemMessage(SYSTEM_PROMPT.replace("{numberedContext}", numberedContext)),
-    new HumanMessage(fullPrompt),
-  ]);
+  const systemInstruction = SYSTEM_PROMPT.replace("{numberedContext}", numberedContext);
+  const responseText = await callGemini(fullPrompt, systemInstruction, 0.1);
 
   return {
-    content: formatResponse(String(response.content)),
+    content: formatResponse(responseText),
     citations,
   };
 }
