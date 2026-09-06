@@ -22,15 +22,15 @@ export async function POST(req: NextRequest) {
 
     const [result, sessionId] = await Promise.all([
       runRagPipeline(query, history),
-      visitorFingerprint
-        ? getOrCreateSession(supabase, visitorFingerprint)
-        : Promise.resolve(null),
+      getOrCreateSession(supabase, visitorFingerprint || "anonymous-visitor"),
     ]);
 
-    // Log both messages fire-and-forget after result is ready
+    // Reliably log both messages to Postgres before returning
     if (sessionId) {
-      logMessage(supabase, sessionId, "user", query);
-      logMessage(supabase, sessionId, "assistant", result.content);
+      await Promise.allSettled([
+        logMessage(supabase, sessionId, "user", query),
+        logMessage(supabase, sessionId, "assistant", result.content),
+      ]);
     }
 
     return NextResponse.json({
