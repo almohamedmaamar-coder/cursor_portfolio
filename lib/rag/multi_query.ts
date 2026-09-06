@@ -1,4 +1,4 @@
-import { ChatMistralAI } from "@langchain/mistralai";
+import { ChatGoogleGenerativeAI } from "@langchain/google-genai";
 import { HumanMessage, SystemMessage } from "@langchain/core/messages";
 
 const HYDE_SYSTEM_PROMPT = `You are a query rephrasing engine for portfolio search.
@@ -11,9 +11,9 @@ Given a user's question about Mohamed Maamar's portfolio, generate 3 semanticall
 - Return ONLY the 3 rephrased questions, one per line, no numbering or explanations`;
 
 export async function generateQueryVariations(query: string): Promise<string[]> {
-  const model = new ChatMistralAI({
-    modelName: process.env.MISTRAL_MODEL || "mistral-small-latest",
-    apiKey: process.env.MISTRAL_API_KEY,
+  const model = new ChatGoogleGenerativeAI({
+    model: process.env.GOOGLE_MODEL || "gemini-2.5-flash",
+    apiKey: process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY,
     temperature: 0.3,
   });
 
