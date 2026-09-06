@@ -9,22 +9,31 @@ export async function getOrCreateSession(
   supabase: SupabaseClient,
   visitorFingerprint: string
 ): Promise<string | null> {
-  let { data: session } = await supabase
-    .from("chat_sessions")
-    .select("id")
-    .eq("visitor_fingerprint", visitorFingerprint)
-    .single();
-
-  if (!session) {
-    const { data: newSession } = await supabase
+  try {
+    let { data: session } = await supabase
       .from("chat_sessions")
-      .insert({ visitor_fingerprint: visitorFingerprint })
       .select("id")
-      .single();
-    session = newSession;
-  }
+      .eq("visitor_fingerprint", visitorFingerprint)
+      .maybeSingle();
 
-  return session?.id ?? null;
+    if (!session) {
+      const { data: newSession, error } = await supabase
+        .from("chat_sessions")
+        .insert({ visitor_fingerprint: visitorFingerprint })
+        .select("id")
+        .single();
+      if (error) {
+        console.error("❌ [Telemetry] Failed to create session:", error.message);
+      }
+      session = newSession;
+    }
+
+    return session?.id ?? null;
+  } catch (err: unknown) {
+    const msg = err instanceof Error ? err.message : "Unknown error";
+    console.error("❌ [Telemetry] Session resolution error:", msg);
+    return null;
+  }
 }
 
 export async function logMessage(
